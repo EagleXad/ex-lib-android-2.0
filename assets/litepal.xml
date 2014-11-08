@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="sample" ></dbname>
+
+    <version value="1" ></version>
+
+    <list>
+        <mapping class="com.example.demo_litepal_ex.entry.User"></mapping>
+        <mapping class="com.example.demo_litepal_ex.entry.Admin"></mapping>
+        <mapping class="com.example.demo_litepal_ex.entry.QQInfo"></mapping>
+    </list>
+
+</litepal>
