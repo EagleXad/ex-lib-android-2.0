@@ -6,12 +6,15 @@
 
 package com.ex.lib.core.utils.mgr;
 
+import java.util.Locale;
+
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.view.View;
-import android.view.animation.Animation;
 
 /**
  * @ClassName: MgrAndroid
@@ -66,6 +69,35 @@ public class MgrAndroid {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Method_改变本地语言
+	 * 
+	 * @param lanAtr_目标语言字段
+	 * @return 更改结果
+	 */
+	public boolean changeLanguage(String lanAtr) {
+
+		try {
+			Resources resources = mContext.getResources();
+			Configuration config = resources.getConfiguration();
+			DisplayMetrics dm = resources.getDisplayMetrics();
+
+			if (lanAtr.equals("en")) {
+				config.locale = Locale.ENGLISH;
+			} else {
+				config.locale = Locale.SIMPLIFIED_CHINESE;
+			}
+
+			resources.updateConfiguration(config, dm);
+
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return false;
 	}
 
 	/**
@@ -130,7 +162,7 @@ public class MgrAndroid {
 
 		return getIdentifier(name, "anim");
 	}
-	
+
 	/**
 	 * Method_attr
 	 * 

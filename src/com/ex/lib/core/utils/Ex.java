@@ -13,6 +13,7 @@ import com.ex.lib.core.utils.mgr.MgrActivity;
 import com.ex.lib.core.utils.mgr.MgrAndroid;
 import com.ex.lib.core.utils.mgr.MgrApp;
 import com.ex.lib.core.utils.mgr.MgrCache;
+import com.ex.lib.core.utils.mgr.MgrCrashHandler;
 import com.ex.lib.core.utils.mgr.MgrDB;
 import com.ex.lib.core.utils.mgr.MgrDevice;
 import com.ex.lib.core.utils.mgr.MgrDialog;
@@ -247,6 +248,14 @@ public class Ex {
 	public static MgrQuer Quer() {
 
 		return MgrQuer.getInstance();
+	}
+	
+	/**
+	 * Ex 应用异常管理
+	 */
+	public static MgrCrashHandler CrashHandler(Context context){
+		
+		return MgrCrashHandler.getInstance(context);
 	}
 
 }

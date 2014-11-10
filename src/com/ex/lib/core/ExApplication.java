@@ -8,6 +8,7 @@ package com.ex.lib.core;
 import org.litepal.LitePalApplication;
 
 import com.baidu.frontia.FrontiaApplication;
+import com.ex.lib.core.utils.mgr.MgrCrashHandler;
 
 /**
  * @ClassName: ExApplication
@@ -23,6 +24,9 @@ public class ExApplication extends LitePalApplication {
 	public void onCreate() {
 		super.onCreate();
 
+		// 初始化本地异常处理
+		MgrCrashHandler.getInstance(getApplicationContext()).init();
+		// 初始化百度推送信息
 		FrontiaApplication.initFrontiaApplication(getApplicationContext());
 	}
 
