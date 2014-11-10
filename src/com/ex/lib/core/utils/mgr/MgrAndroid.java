@@ -8,8 +8,10 @@ package com.ex.lib.core.utils.mgr;
 
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.animation.Animation;
 
 /**
  * @ClassName: MgrAndroid
@@ -75,21 +77,31 @@ public class MgrAndroid {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends View> T getViewHolder(View view, int id) {
-		
+
 		SparseArray<View> viewHolder = (SparseArray<View>) view.getTag();
-		
+
 		if (viewHolder == null) {
 			viewHolder = new SparseArray<View>();
 			view.setTag(viewHolder);
 		}
-		
+
 		View childView = viewHolder.get(id);
 		if (childView == null) {
 			childView = view.findViewById(id);
 			viewHolder.put(id, childView);
 		}
-		
+
 		return (T) childView;
+	}
+
+	/**
+	 * Method_Resources
+	 * 
+	 * @return 对象
+	 */
+	public Resources resources() {
+
+		return mContext.getResources();
 	}
 
 	/**
@@ -103,6 +115,11 @@ public class MgrAndroid {
 		return getIdentifier(name, "string");
 	}
 
+	public String string(int id) {
+
+		return resources().getString(id);
+	}
+
 	/**
 	 * Method_anim
 	 * 
@@ -113,7 +130,7 @@ public class MgrAndroid {
 
 		return getIdentifier(name, "anim");
 	}
-
+	
 	/**
 	 * Method_attr
 	 * 

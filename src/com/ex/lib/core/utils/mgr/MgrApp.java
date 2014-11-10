@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.ex.lib.R;
 import com.ex.lib.core.utils.Ex;
 
 /**
@@ -104,7 +105,7 @@ public class MgrApp {
 		intent.putExtra(Intent.EXTRA_EMAIL, emailAddr);
 		intent.setType("plain/text");
 
-		mContext.startActivity(Intent.createChooser(intent, "选择 Email 客户端"));
+		mContext.startActivity(Intent.createChooser(intent, MgrAndroid.getInstance(mContext).string(R.string.ex_str_content_please_install_email)));
 	}
 
 	/**
@@ -232,7 +233,7 @@ public class MgrApp {
 		int result = Settings.Secure.getInt(mContext.getContentResolver(), Settings.Secure.INSTALL_NON_MARKET_APPS, 0);
 
 		if (result == 0) {
-			Toast.makeText(mContext, "请选中“允许安装非电子市场的应用程序选项”再试！", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, MgrAndroid.getInstance(mContext).string(R.string.ex_str_content_please_not_mark_app), Toast.LENGTH_SHORT).show();
 
 			Intent intent = new Intent();
 
@@ -328,7 +329,7 @@ public class MgrApp {
 			} catch (Exception e) {
 
 				try {
-					Toast.makeText(mContext, "运行失败,请检查该应用的类型!", Toast.LENGTH_SHORT).show();
+					Toast.makeText(mContext, MgrAndroid.getInstance(mContext).string(R.string.ex_str_content_please_check_app_type), Toast.LENGTH_SHORT).show();
 				} catch (Exception ex) {
 				}
 

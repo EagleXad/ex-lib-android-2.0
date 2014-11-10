@@ -27,6 +27,7 @@ import android.os.Environment;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 
+import com.ex.lib.R;
 import com.ex.lib.ext.utils.OpenUDID;
 
 /**
@@ -308,22 +309,22 @@ public class MgrDevice {
 
 			HashMap<Integer, String> ntMap = new HashMap<Integer, String>();
 
-			ntMap.put(TelephonyManager.NETWORK_TYPE_UNKNOWN, "未知");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_GPRS, "GPRS（移动/联通 2G）");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_EDGE, "EDGE（移动/联通 2G）");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_UMTS, "UMTS（移动/联通3G）");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_CDMA, "CDMA（电信2G）");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_EVDO_0, "EVDO0（电信3G）");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_EVDO_A, "EVDOA（电信3G）");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_1xRTT, "1xRTT");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_HSDPA, "HSDPA（移动/联通3G）");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_HSUPA, "HSUPA");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_HSPA, "HSPA");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_IDEN, "IDEN");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_EVDO_B, "EVDOB（电信3G）");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_LTE, "LTE");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_EHRPD, "EHRPD");
-			ntMap.put(TelephonyManager.NETWORK_TYPE_HSPAP, "HSPAP");
+			ntMap.put(TelephonyManager.NETWORK_TYPE_UNKNOWN, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_unknown));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_GPRS, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_gprs));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_EDGE, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_edge));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_UMTS, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_umts));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_CDMA, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_cdma));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_EVDO_0, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_evdo0));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_EVDO_A, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_evdoa));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_1xRTT, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_1xrtt));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_HSDPA, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_hsdpa));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_HSUPA, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_hsupa));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_HSPA, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_hspa));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_IDEN, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_iden));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_EVDO_B, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_evdob));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_LTE, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_lte));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_EHRPD, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_ehrpd));
+			ntMap.put(TelephonyManager.NETWORK_TYPE_HSPAP, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_net_type_hspap));
 
 			String networkType = ntMap.get(netWorkId);
 
@@ -349,10 +350,10 @@ public class MgrDevice {
 
 			Map<Integer, String> ptMap = new HashMap<Integer, String>();
 
-			ptMap.put(TelephonyManager.PHONE_TYPE_NONE, "未知");
-			ptMap.put(TelephonyManager.PHONE_TYPE_GSM, "GSM（移动/联通）");
-			ptMap.put(TelephonyManager.PHONE_TYPE_CDMA, "CDMA（电信）");
-			ptMap.put(TelephonyManager.PHONE_TYPE_SIP, "SIP");
+			ptMap.put(TelephonyManager.PHONE_TYPE_NONE, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_phone_type_none));
+			ptMap.put(TelephonyManager.PHONE_TYPE_GSM, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_phone_type_gsm));
+			ptMap.put(TelephonyManager.PHONE_TYPE_CDMA, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_phone_type_cmda));
+			ptMap.put(TelephonyManager.PHONE_TYPE_SIP, MgrAndroid.getInstance(mContext).string(R.string.ex_str_device_phone_type_sip));
 
 			String phoneType = ptMap.get(phoneTypeId);
 

@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ex.lib.R;
 import com.ex.lib.core.callback.ExRequestCallback;
 import com.ex.lib.core.exception.ExException;
 import com.ex.lib.core.ible.ExNetIble;
@@ -140,19 +141,19 @@ public abstract class ExBaseFragment extends Fragment {
 
 		// 判断请求地址是否为空
 		if (Ex.String().isEmpty(url)) {
-			Ex.Toast(mContext).show("请求地址不能为空");
+			Ex.Toast(mContext).show(R.string.ex_str_param_not_empty);
 
 			return;
 		}
 		// 判断网络是否可以使用
 		if (!MgrNet.getInstance(mContext).isConnected() && !MgrNet.getInstance(mContext).isConnected()) {
-			Ex.Toast(mContext).show("网络不可用");
+			Ex.Toast(mContext).show(R.string.ex_str_net_no);
 
 			return;
 		}
 		// 判断当前是否显示加载框
 		if (isShow == ExBaseAcvitiy.LOADING_DIALOG_SHOW) {
-			Ex.Dialog(mContext).showProgressDialog("", ExConstants.STR_LOADING_WARN);
+			Ex.Dialog(mContext).showProgressDialog(-1, R.string.ex_str_loading);
 		}
 		// 接口回调回去操作参数
 		Map<String, String> params = mNetIble.onStart(what);
