@@ -362,7 +362,7 @@ public class MgrCache {
 
 		File file = getFile(key);
 
-		if (!file.exists()) {
+		if (file == null || !file.exists()) {
 
 			return null;
 		}
@@ -388,7 +388,7 @@ public class MgrCache {
 
 		File file = getFile(key);
 
-		if (!file.exists()) {
+		if (file == null || !file.exists()) {
 
 			return null;
 		}

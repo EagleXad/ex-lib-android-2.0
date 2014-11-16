@@ -6,6 +6,8 @@
 
 package com.ex.lib.core.ible;
 
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,13 +21,34 @@ import java.util.Map;
 public interface ExNetIble {
 
 	/**
+	 * FINAL_OBJECT 请求参数 OBJECT 类型
+	 */
+	public final String NET_PARAM_OBJECT = "param_object";
+	/**
+	 * FINAL_COOKIE_STR 请求参数 COOKIE_STR 类型
+	 */
+	public final String NET_PARAM_COOKIE_STR = "param_cookie_str";
+	
+	/**
+	 * FINAL_OBJECT 请求参数 CacheKey 类型
+	 */
+	public final String NET_PARAM_CACHE_KEY = "param_cache_key";
+
+	/**
 	 * Method_启动处理回调
 	 * 
-	 * @param what
-	 *            操作码
+	 * @param what_操作码
 	 * @return 请求参数
 	 */
 	public Map<String, String> onStart(int what);
+
+	/**
+	 * Method_启动定义参数回调
+	 * 
+	 * @param what_操作码
+	 * @return 请求参数
+	 */
+	public Map<String, Object> onStartNetParam(int what);
 
 	/**
 	 * Method_成功处理回调
@@ -33,7 +56,17 @@ public interface ExNetIble {
 	 * @param what_操作码
 	 * @param result_请求结果字符串
 	 */
-	public void onSuccess(int what, String result);
+	public void onSuccess(int what, String result, boolean hashCache);
+
+	/**
+	 * Method_成功处理回调
+	 * 
+	 * @param what_操作码
+	 * @param result_请求结果流
+	 * @param cookies_请求结果
+	 *            Cookie 信息
+	 */
+	public void onSuccess(int what, InputStream result, HashMap<String, String> cookies, boolean hashCache);
 
 	/**
 	 * Method_错误处理回调

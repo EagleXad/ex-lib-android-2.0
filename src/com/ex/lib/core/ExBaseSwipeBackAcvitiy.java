@@ -26,6 +26,7 @@ import com.ex.lib.core.ible.ExNetIble;
 import com.ex.lib.core.ible.ExReceiverIble;
 import com.ex.lib.core.utils.Ex;
 import com.ex.lib.core.utils.mgr.MgrNet;
+import com.ex.lib.core.utils.mgr.MgrString;
 import com.ex.lib.ext.widget.swipbacklayout.app.SwipeBackActivity;
 import com.ex.lib.ext.xutils.ViewUtils;
 
@@ -56,11 +57,15 @@ public abstract class ExBaseSwipeBackAcvitiy extends SwipeBackActivity {
 	 * FINAL_POST 数据请求
 	 */
 	public static final int NET_METHOD_POST = 103;
+	/**
+	 * FINAL_POST_OBJECT 数据请求
+	 */
+	public static final int NET_METHOD_POST_OBJECT = 104;
 
 	private ExNetIble mNetIble; // 网络请求接口
 	private ExReceiverIble mReceiverIble; // 广播处理接口
 
-	protected ExBaseSwipeBackAcvitiy mAcvitiy;
+	protected ExBaseSwipeBackAcvitiy mActivity;
 	protected Context mContext;
 
 	@Override
@@ -70,7 +75,7 @@ public abstract class ExBaseSwipeBackAcvitiy extends SwipeBackActivity {
 		// 绑定布局
 		setContentView(exInitLayout());
 		// 初始化全局变量
-		mAcvitiy = this;
+		mActivity = this;
 		mContext = this.getApplicationContext();
 		// 初始化 XUtils 注解绑定控件
 		ViewUtils.inject(this);
@@ -83,7 +88,7 @@ public abstract class ExBaseSwipeBackAcvitiy extends SwipeBackActivity {
 		// 注册本地广播
 		regiesterReceiver();
 		// 添加 Activity 管理
-		Ex.Activity(mContext).add(mAcvitiy);
+		Ex.Activity(mContext).add(mActivity);
 	}
 
 	@Override
@@ -95,7 +100,7 @@ public abstract class ExBaseSwipeBackAcvitiy extends SwipeBackActivity {
 		// 移除 Handler 所有回调和消息
 		mHandler.removeCallbacksAndMessages(null);
 		// 终止当前 Activity
-		Ex.Activity(mContext).finish();
+		// Ex.Activity(mContext).finish();
 	}
 
 	/**
@@ -117,10 +122,11 @@ public abstract class ExBaseSwipeBackAcvitiy extends SwipeBackActivity {
 	 * @param url_请求主地址信息
 	 * @param what_请求标识码
 	 * @param method_网络请求方式
+	 * @param isCache_是否使用缓存
 	 */
-	protected void startTask(String url, int what, int method) {
+	protected void startTask(String url, int what, int method, boolean isCache) {
 
-		startTask(url, what, ExBaseSwipeBackAcvitiy.LOADING_DIALOG_SHOW, method);
+		startTask(url, what, true, method, isCache);
 	}
 
 	/**
@@ -129,8 +135,10 @@ public abstract class ExBaseSwipeBackAcvitiy extends SwipeBackActivity {
 	 * @param url_请求主地址信息
 	 * @param what_请求标识码
 	 * @param isShow_是否显示加载框
+	 * @param method_网络请求方式
+	 * @param isCache_是否使用缓存
 	 */
-	protected void startTask(final String url, final int what, final int isShow, int method) {
+	protected void startTask(final String url, final int what, final boolean isShow, final int method, final boolean isCache) {
 
 		// 判断请求地址是否为空
 		if (Ex.String().isEmpty(url)) {
@@ -145,11 +153,25 @@ public abstract class ExBaseSwipeBackAcvitiy extends SwipeBackActivity {
 			return;
 		}
 		// 判断当前是否显示加载框
-		if (isShow == ExBaseSwipeBackAcvitiy.LOADING_DIALOG_SHOW) {
+		if (isShow && !isCache) {
 			Ex.Dialog(mContext).showProgressDialog(-1, R.string.ex_str_loading);
 		}
 		// 接口回调回去操作参数
 		Map<String, String> params = mNetIble.onStart(what);
+		Map<String, Object> paramsNet = mNetIble.onStartNetParam(what);
+		// 缓存使用的 key
+		String caheKey = "";
+		// 判断使用缓存的类型数据
+		if (method == ExBaseSwipeBackAcvitiy.NET_METHOD_POST_OBJECT) {
+			// 如果使用对象请求的时候，需要使用用户自定义 key
+			String key = (String) paramsNet.get(ExNetIble.NET_PARAM_CACHE_KEY);
+
+			caheKey = Ex.MD5().getMD5(key);
+		} else {
+			// 正常情况下使用请求 url 和请求参数组成的 key
+			caheKey = Ex.MD5().getMD5(MgrString.getInstance().getGenerateUrl(url, params));
+		}
+
 		ExRequestCallback requestCallback = new ExRequestCallback() {
 
 			@Override
@@ -166,12 +188,19 @@ public abstract class ExBaseSwipeBackAcvitiy extends SwipeBackActivity {
 				Message msg = mHandler.obtainMessage();
 				// 传入操作码
 				msg.what = what;
-				// 是否显示对话框
-				msg.arg1 = isShow;
 				// 请求结果码
 				msg.arg2 = 0;
 				// 请求结果
-				msg.obj = result;
+				msg.obj = inStream;
+				// 请求结果参数
+				Bundle data = new Bundle();
+				data.putSerializable("cookies", cookies);
+				data.putString("result", result);
+				data.putBoolean("cache", false);
+				data.putBoolean("isShow", isShow);
+
+				msg.setData(data);
+
 				// 发送消息
 				mHandler.sendMessage(msg);
 			}
@@ -183,22 +212,57 @@ public abstract class ExBaseSwipeBackAcvitiy extends SwipeBackActivity {
 				Message msg = mHandler.obtainMessage();
 				// 传入操作码
 				msg.what = what;
-				// 是否显示对话框
-				msg.arg1 = isShow;
 				// 请求结果码
 				msg.arg2 = statusCode;
 				// 请求结果
-				msg.obj = e.getMessage();
+				Bundle data = new Bundle();
+				data.putString("result", e.getMessage());
+				data.putBoolean("isShow", isShow);
+
+				msg.setData(data);
 				// 发送消息
 				mHandler.sendMessage(msg);
 			}
 		};
 
+		if (isCache && !Ex.String().isEmpty(caheKey)) {
+			String result = Ex.Cache(mContext).getAsString(caheKey);
+
+			if (Ex.String().isEmpty(result)) {
+				// 创建消息对象
+				Message msg = mHandler.obtainMessage();
+				// 传入操作码
+				msg.what = what;
+				// 请求结果码
+				msg.arg2 = 0;
+				// 请求结果
+				msg.obj = null;
+				// 请求结果参数
+				Bundle data = new Bundle();
+				data.putSerializable("cookies", null);
+				data.putString("result", result);
+				data.putBoolean("cache", true);
+				data.putBoolean("isShow", isShow);
+
+				msg.setData(data);
+
+				// 发送消息
+				mHandler.sendMessage(msg);
+
+				return;
+			}
+		}
+
 		// 启动网络请求
-		if (method == ExBaseSwipeBackAcvitiy.NET_METHOD_GET) {
+		if (method == ExBaseAcvitiy.NET_METHOD_GET) {
 			Ex.Net(mContext).sendAsyncGet(url, params, requestCallback);
-		} else {
+		} else if (method == ExBaseAcvitiy.NET_METHOD_POST) {
 			Ex.Net(mContext).sendAsyncPost(url, params, requestCallback);
+		} else {
+			Object message = paramsNet.get(ExNetIble.NET_PARAM_OBJECT);
+			String cookieString = (String) paramsNet.get(ExNetIble.NET_PARAM_COOKIE_STR);
+
+			Ex.Net(mContext).sendAsyncPostWithEnity(url, message, cookieString, requestCallback);
 		}
 	}
 
@@ -207,24 +271,41 @@ public abstract class ExBaseSwipeBackAcvitiy extends SwipeBackActivity {
 	 */
 	private Handler mHandler = new Handler() {
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void handleMessage(Message msg) {
 
 			// 获取结果值
-			String result = msg.obj.toString();
+			String result = msg.getData().getString("result");
+			boolean isShow = msg.getData().getBoolean("isShow");
+
 			// 获取操作码
 			int what = msg.what;
-			// 获取是否显示对话框
-			int arg1 = msg.arg1;
 			// 获取请求结果码
 			int arg2 = msg.arg2;
 			// 判断是否显示对话框
-			if (arg1 == ExBaseSwipeBackAcvitiy.LOADING_DIALOG_SHOW) {
+			if (isShow) {
 				Ex.Dialog(mContext).dismissProgressDialog();
+			}
+			// 判断对象是否销毁
+			if (mActivity == null) {
+
+				return;
 			}
 			// 回调请求结果
 			if (arg2 == 0) {
-				mNetIble.onSuccess(what, result);
+				boolean cache = msg.getData().getBoolean("cache");
+				// 判断使用缓存处理结果
+				if (cache) {
+					mNetIble.onSuccess(what, result, cache);
+					mNetIble.onSuccess(what, null, null, cache);
+				} else {
+					HashMap<String, String> cookies = (HashMap<String, String>) msg.getData().getSerializable("cookies");
+					InputStream inStream = (InputStream) msg.obj;
+
+					mNetIble.onSuccess(what, result, cache);
+					mNetIble.onSuccess(what, inStream, cookies, cache);
+				}
 			} else {
 				mNetIble.onError(what, arg2, result);
 			}
@@ -239,6 +320,11 @@ public abstract class ExBaseSwipeBackAcvitiy extends SwipeBackActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 
+			// 判断对象是否销毁
+			if (mActivity == null) {
+
+				return;
+			}
 			// 回调广播结果
 			mReceiverIble.onReceiver(intent);
 		}
